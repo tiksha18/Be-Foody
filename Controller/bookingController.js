@@ -48,6 +48,11 @@ async function createPaymentSession(req, res)
     }
 }
 
+async function checkoutComplete(req, res)
+{
+    console.log("checkout func runs");
+}
+
 
 async function createNewBooking(req, res)
 {
@@ -56,3 +61,4 @@ async function createNewBooking(req, res)
 
 module.exports.createPaymentSession = createPaymentSession;
 module.exports.createNewBooking = createNewBooking;
+module.exports.checkoutComplete = checkoutComplete;
