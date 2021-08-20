@@ -51,6 +51,8 @@ async function createPaymentSession(req, res)
 async function checkoutComplete(req, res)
 {
     console.log("checkout func runs");
+    console.log("request object");
+    console.log(req);
 }
 
 
