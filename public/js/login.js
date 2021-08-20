@@ -12,7 +12,7 @@ forgetPassword.addEventListener("click", async function(e)
         e.preventDefault();
         if(email.value)
         {
-            let obj = await axios.post("http://localhost:3000/api/users/forgetpassword", {email : email.value});
+            let obj = await axios.post("https://hey-foody.herokuapp.com/api/users/forgetpassword", {email : email.value});
             console.log(obj);
         }
     }
@@ -30,7 +30,7 @@ loginButton.addEventListener("click", async function(e)
         //alert("Logging In !");
         if(email.value && password.value)
         {
-            let obj = await axios.post("http://localhost:3000/api/users/login", {email : email.value, password : password.value});
+            let obj = await axios.post("https://hey-foody.herokuapp.com/api/users/login", {email : email.value, password : password.value});
             console.log(obj);
             if(obj.data.data)
             {
