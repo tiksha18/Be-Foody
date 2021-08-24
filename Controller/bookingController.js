@@ -1,8 +1,8 @@
-const stripe = require("stripe");
+// const stripe = require("stripe");
 const bookingModel = require("../Model/bookingModel");
 const planModel = require("../Model/plansModel");
 const userModel = require("../Model/usersModel");
-const stripeObj = stripe('sk_test_51JOSOmSAKlgVI5t21qCo2DOCTLuKrtFtSPE7D53Lwpy022I36bCwcAegGntPnF3mC4RyFo0mqmtaX3zjHKW4sfSk00iO9ErLFo');
+// const stripeObj = stripe('sk_test_51JOSOmSAKlgVI5t21qCo2DOCTLuKrtFtSPE7D53Lwpy022I36bCwcAegGntPnF3mC4RyFo0mqmtaX3zjHKW4sfSk00iO9ErLFo');
 
 
 async function createPaymentSession(req, res)
@@ -48,24 +48,24 @@ async function createPaymentSession(req, res)
     }
 }
 
-async function checkoutComplete(req, res)
-{
-    const END_POINT_KEY = process.env.END_POINT_KEY;
-    // console.log("checkout complete ran");
-    // console.log(req);
-    const stripeSignature = req.headers['stripe-signature'];
-    let event;
-    try
-    {
-        event = stripe.webhooks.constructEvent(req.body, stripeSignature, END_POINT_KEY);
-    }
-    catch(error)
-    {
-        res.status(400).send(`Webhook Error : ${error.message}`);
-    }
-    console.log("event object : ");
-    console.log(event);
-}
+// async function checkoutComplete(req, res)
+// {
+//     const END_POINT_KEY = process.env.END_POINT_KEY;
+//     // console.log("checkout complete ran");
+//     // console.log(req);
+//     const stripeSignature = req.headers['stripe-signature'];
+//     let event;
+//     try
+//     {
+//         event = stripeObj.webhooks.constructEvent(req.body, stripeSignature, END_POINT_KEY);
+//     }
+//     catch(error)
+//     {
+//         res.status(400).send(`Webhook Error : ${error.message}`);
+//     }
+//     console.log("event object : ");
+//     console.log(event);
+// }
 
 
 async function createNewBooking(req, res)
@@ -75,4 +75,4 @@ async function createNewBooking(req, res)
 
 module.exports.createPaymentSession = createPaymentSession;
 module.exports.createNewBooking = createNewBooking;
-module.exports.checkoutComplete = checkoutComplete;
+// module.exports.checkoutComplete = checkoutComplete;
