@@ -50,9 +50,21 @@ async function createPaymentSession(req, res)
 
 async function checkoutComplete(req, res)
 {
-    console.log("checkout func runs");
-    console.log("request object");
-    console.log(req);
+    const END_POINT_KEY = process.env.END_POINT_KEY;
+    // console.log("checkout complete ran");
+    // console.log(req);
+    const stripeSignature = req.headers['stripe-signature'];
+    let event;
+    try
+    {
+        event = stripe.webhooks.constructEvent(req.body, stripeSignature, END_POINT_KEY);
+    }
+    catch(error)
+    {
+        res.status(400).send(`Webhook Error : ${error.message}`);
+    }
+    console.log("event object : ");
+    console.log(event);
 }
 
 
