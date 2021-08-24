@@ -1,8 +1,8 @@
-// const stripe = require("stripe");
+const stripe = require("stripe");
 const bookingModel = require("../Model/bookingModel");
 const planModel = require("../Model/plansModel");
 const userModel = require("../Model/usersModel");
-// const stripeObj = stripe('sk_test_51JOSOmSAKlgVI5t21qCo2DOCTLuKrtFtSPE7D53Lwpy022I36bCwcAegGntPnF3mC4RyFo0mqmtaX3zjHKW4sfSk00iO9ErLFo');
+const stripeObj = stripe('sk_test_51JOSOmSAKlgVI5t21qCo2DOCTLuKrtFtSPE7D53Lwpy022I36bCwcAegGntPnF3mC4RyFo0mqmtaX3zjHKW4sfSk00iO9ErLFo');
 
 
 async function createPaymentSession(req, res)
@@ -19,6 +19,7 @@ async function createPaymentSession(req, res)
             payment_method_types: ['card'],
             // customer : user.name,
             customer_email : user.email,
+            client_reference_id : planId,
             line_items: [
             {
                 price_data: {
@@ -48,31 +49,63 @@ async function createPaymentSession(req, res)
     }
 }
 
-// async function checkoutComplete(req, res)
-// {
-//     const END_POINT_KEY = process.env.END_POINT_KEY;
-//     // console.log("checkout complete ran");
-//     // console.log(req);
-//     const stripeSignature = req.headers['stripe-signature'];
-//     let event;
-//     try
-//     {
-//         event = stripeObj.webhooks.constructEvent(req.body, stripeSignature, END_POINT_KEY);
-//     }
-//     catch(error)
-//     {
-//         res.status(400).send(`Webhook Error : ${error.message}`);
-//     }
-//     console.log("event object : ");
-//     console.log(event);
-// }
-
-
-async function createNewBooking(req, res)
+async function checkoutComplete(req, res)
 {
-    
+    try
+    {
+        const END_POINT_KEY = process.env.END_POINT_KEY;
+        const stripeSignature = req.headers['stripe-signature'];
+        // if(req.body.data.type == "checkout.session.completed")
+        // {
+            const userEmail = req.body.data.object.customer_email;
+            const planId = req.body.data.object.client_reference_id;
+            await createNewBooking(userEmail, planId);
+        // }
+    }
+    catch(error)
+    {
+        res.json({
+            error
+        })
+    }
+}
+
+
+async function createNewBooking(userEmail, planId)
+{
+    try
+    {
+        const user = await userModel.findOne({email : userEmail});
+        const plan = await planModel.findById(planId);
+        const userId = user["_id"];
+        if(user.bookedPlanId == undefined)
+        {
+            const bookingOrder = {
+                userId : userId,
+                bookedPlans : [ { planId : planId, name : plan.name, currentPrice : plan.price} ]
+            }
+            const newBookingOrder = await bookingModel.create(bookingOrder);
+            user.bookedPlanId = newBookingOrder["_id"];
+            await user.save({validateBeforeSave : false});
+        }
+        else
+        {
+            const newBookedPlan = {
+                planId : planId, 
+                name : plan.name, 
+                currentPrice : plan.price
+            }
+            const userBookingObject = await bookingModel.findById(user.bookedPlanId);
+            userBookingObject.bookedPlans.push(newBookedPlan);
+            await userBookingObject.save();
+        }
+    }
+    catch(error)
+    {
+        return error;
+    }
 }
 
 module.exports.createPaymentSession = createPaymentSession;
 module.exports.createNewBooking = createNewBooking;
-// module.exports.checkoutComplete = checkoutComplete;
+module.exports.checkoutComplete = checkoutComplete;

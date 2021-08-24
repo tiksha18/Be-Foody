@@ -17,7 +17,7 @@ signupBtn.addEventListener("click", async function(e)
                 "password" : password.value,
                 "confirmPassword" : confirmPassword.value
             }
-            let obj = await axios.post("http://localhost:3000/api/users/signup", signupObj);
+            let obj = await axios.post("https://hey-foody.herokuapp.com/api/users/signup", signupObj);
             console.log(obj);
         }
     }

@@ -15,7 +15,7 @@ const bookedPlanSchema = new mongoose.Schema({
         type : String,
         required : true
     },
-    planName : {
+    name : {
         type : String,
         required : true
     },
